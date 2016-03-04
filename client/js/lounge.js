@@ -921,8 +921,7 @@ $(function() {
 	}
 
 	function complete(word) {
-		var firstWord=$("#input").val().indexOf(word) == 0;
-
+		var firstWord=$("#input").val().lastIndexOf(word) == 0;
 		if(firstWord){
 			var words = commands.slice();
 		}else{
@@ -946,9 +945,10 @@ $(function() {
 			if(firstWord){
 				words.push(nicks[i]+": ");
 			}else{
-				words.push(nicks[i]);
+				words.push(nicks[i]+" ");
 			}
 		}
+
 
 		sidebar.find(".chan")
 			.each(function() {
