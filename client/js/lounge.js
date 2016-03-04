@@ -867,21 +867,33 @@ $(function() {
 	}
 
 	function complete(word) {
-		var words = commands.slice();
+		var firstWord=$("#input").val().indexOf(word) == 0;
+
+		if(firstWord){
+			var words = commands.slice();
+		}else{
+			var words =[];
+		}
 		var users = chat.find(".active").find(".users");
 		var nicks = users.data("nicks");
 
 		if (!nicks) {
 			nicks = [];
 			users.find(".user").each(function() {
-				var nick = $(this).text().replace(/[~&@%+]/, "");
+				var nick = $(this).text().replace(/[~&@%+]/, ""); //remove the old nick
+
 				nicks.push(nick);
+
 			});
 			users.data("nicks", nicks);
 		}
 
 		for (var i in nicks) {
-			words.push(nicks[i]);
+			if(firstWord){
+				words.push(nicks[i]+": ");
+			}else{
+				words.push(nicks[i]);
+			}
 		}
 
 		sidebar.find(".chan")
@@ -892,12 +904,16 @@ $(function() {
 				}
 			});
 
-		return $.grep(
-			words,
-			function(w) {
-				return !w.toLowerCase().indexOf(word.toLowerCase());
-			}
-		);
+
+			var test =$.grep(
+				words,
+				function(w) {
+					return !w.toLowerCase().indexOf(word.toLowerCase());
+				}
+			);
+
+//		console.log(test);
+		return test;
 	}
 
 	function confirmExit() {
