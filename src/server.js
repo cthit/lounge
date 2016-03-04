@@ -104,19 +104,19 @@ function init(socket, client, token) {
 	} else {
 		socket.on(
 			"input",
-			function(data) {
+			function (data) {
 				client.input(data);
 			}
 		);
 		socket.on(
 			"more",
-			function(data) {
+			function (data) {
 				client.more(data);
 			}
 		);
 		socket.on(
 			"conn",
-			function(data) {
+			function (data) {
 				client.connect(data);
 			}
 		);
