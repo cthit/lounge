@@ -382,12 +382,12 @@ $(function() {
 	var userStyles = $("#user-specified-css");
 	var settings = $("#settings");
 	var options = $.extend({
-		badge: false,
-		colors: false,
+		badge: true,
+		colors: true,
 		join: true,
 		links: true,
 		mode: true,
-		motd: false,
+		motd: true,
 		nick: true,
 		notification: true,
 		part: true,
