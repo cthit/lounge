@@ -100,47 +100,48 @@ function init(socket, client, token) {
 	} else {
 		socket.on(
 			"input",
-			function(data) {
+			function (data) {
 				client.input(data);
 			}
 		);
 		socket.on(
 			"more",
-			function(data) {
+			function (data) {
 				client.more(data);
 			}
 		);
 		socket.on(
 			"conn",
-			function(data) {
+			function (data) {
 				client.connect(data);
 			}
 		);
 		if (!config.public) {
-		socket.on(
-			"open",
-			function(data) {
-				client.open(data);
-			}
-		);
-		socket.on(
-			"sort",
-			function(data) {
-				client.sort(data);
-			}
-		);
-		socket.on(
-			"names",
-			function(data) {
-				client.names(data);
-			}
-		);
-		socket.join(client.id);
-		socket.emit("init", {
-			active: client.activeChannel,
-			networks: client.networks,
-			token: token || ""
-		});
+			socket.on(
+				"open",
+				function (data) {
+					client.open(data);
+				}
+			);
+			socket.on(
+				"sort",
+				function (data) {
+					client.sort(data);
+				}
+			);
+			socket.on(
+				"names",
+				function (data) {
+					client.names(data);
+				}
+			);
+			socket.join(client.id);
+			socket.emit("init", {
+				active: client.activeChannel,
+				networks: client.networks,
+				token: token || ""
+			});
+		}
 	}
 }
 
