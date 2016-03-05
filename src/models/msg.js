@@ -7,6 +7,7 @@ Msg.Type = {
 	INVITE: "invite",
 	JOIN: "join",
 	KICK: "kick",
+	LIST: "list",
 	MESSAGE: "message",
 	MODE: "mode",
 	MOTD: "motd",

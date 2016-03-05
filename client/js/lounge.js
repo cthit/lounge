@@ -11,6 +11,7 @@ $(function() {
 		"/join",
 		"/kick",
 		"/leave",
+		"/list",
 		"/mode",
 		"/msg",
 		"/nick",
@@ -63,7 +64,11 @@ $(function() {
 	);
 
 	socket.on("error", function(e) {
-		console.log(e);
+		if (e.description) {
+			throw e.description
+		} else {
+			throw e
+		}
 	});
 
 	$.each(["connect_error", "disconnect"], function(i, e) {
@@ -218,6 +223,7 @@ $(function() {
 			"join",
 			"mode",
 			"kick",
+			"list",
 			"nick",
 			"part",
 			"quit",
@@ -402,6 +408,21 @@ $(function() {
 			nicks.push(data.users[i].name);
 		}
 		users.data("nicks", nicks);
+	});
+
+	socket.on("list", function(data) {
+		var channels = Object.keys(data).map(key => data[key]).map(channel =>
+			'<li>' + channel.name + ': ' + window.color.stripColorsAndStyle(channel.topic) + '</li>'
+		)
+		$("#listModal").html('<ul>' + channels.join("") + '</ul>')
+		$("#listModal").css({
+			display:"block",
+			position:"absolute",
+			width: '100%',
+			top: 0,
+			left: 0,
+			height: '100%'
+		})
 	});
 
 	var userStyles = $("#user-specified-css");
