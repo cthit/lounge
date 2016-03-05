@@ -411,10 +411,12 @@ $(function() {
 	});
 
 	socket.on("list", function(data) {
-		var channels = Object.keys(data).map(key => data[key]).map(channel =>
-			'<li>' + channel.name + ': ' + window.color.stripColorsAndStyle(channel.topic) + '</li>'
-		)
-		$("#listModal").html('<ul>' + channels.join("") + '</ul>')
+		var channels = Object.keys(data).map(key => data[key]).map(channel => {
+			return $("<li>").addClass("inline-channel").text(channel.name + ': ' + window.color.stripColorsAndStyle(channel.topic))
+				.data("chan", channel.name)
+		})
+		console.log(channels);
+		$("#listModal").html($('<ul>').append(channels))
 		$("#listModal").css({
 			display:"block",
 			position:"absolute",
@@ -423,6 +425,22 @@ $(function() {
 			left: 0,
 			height: '100%'
 		})
+	});
+
+	$("#listModal").on("click", ".inline-channel", function() {
+		var chan = $(".network")
+			.find(".chan.active")
+			.parent(".network")
+			.find(".chan[data-title='" + $(this).data("chan") + "']");
+		if (chan.size() === 1) {
+			chan.click();
+		} else {
+			socket.emit("input", {
+				target: chat.data("id"),
+				text: "/join " + $(this).data("chan")
+			});
+		}
+		$("#listModal").css("display", "none")
 	});
 
 	var userStyles = $("#user-specified-css");
