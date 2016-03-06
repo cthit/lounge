@@ -80,8 +80,7 @@ ClientManager.prototype.addUser = function(name, password) {
 		mkdirp.sync(path);
 		fs.writeFileSync(
 			path + "/" + name + ".json",
-			JSON.stringify(user, null, "  "),
-			{mode: "0777"}
+			JSON.stringify(user, null, "  ")
 		);
 	} catch (e) {
 		throw e;
@@ -103,21 +102,14 @@ ClientManager.prototype.updateUser = function(name, opts) {
 	try {
 		user = this.readUserConfig(name);
 		_.merge(user, opts);
+		fs.writeFileSync(
+			path,
+			JSON.stringify(user, null, " ")
+		);
 	} catch (e) {
 		console.log(e);
 		return;
 	}
-
-	fs.writeFileSync(
-		path,
-		JSON.stringify(user, null, " "),
-		{mode: "0777"},
-		function(err) {
-			if (err) {
-				console.log(err);
-			}
-		}
-	);
 	return true;
 };
 

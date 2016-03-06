@@ -421,6 +421,14 @@ button,
 	right: 3px;
 }
 
+#sidebar,
+#footer {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 #footer {
 	background: rgba(0, 0, 0, .06);
 	border-radius: 2px;
@@ -716,11 +724,11 @@ button,
 	word-wrap: break-word;
 }
 
-#chat .msg .inline-channel {
+.inline-channel {
 	cursor: pointer;
 }
 
-#chat .msg .inline-channel:hover {
+.inline-channel:hover {
 	opacity: .6;
 }
 
@@ -774,13 +782,6 @@ button,
 	color: #999;
 }
 
-#chat .error,
-#chat .error .from,
-#chat .highlight,
-#chat .highlight .from {
-	color: #f00;
-}
-
 #chat.hide-join .join span,
 #chat.hide-mode .mode span,
 #chat.hide-motd .motd span,
@@ -794,6 +795,16 @@ button,
 	font-family: FontAwesome;
 	content: "\f003";
 	color: #2ecc40;
+}
+
+#chat .join .text,
+#chat .kick .text,
+#chat .mode .text,
+#chat .nick .text,
+#chat .part .text,
+#chat .quit .text,
+#chat .topic .text {
+	color: #999;
 }
 
 #chat .join .from:before {
@@ -835,6 +846,7 @@ button,
 	color: #2ecc40;
 }
 
+#chat .action .from,
 #chat .action .text,
 #chat .action .user {
 	color: #f39c12;
@@ -843,7 +855,6 @@ button,
 #chat .action .from:before {
 	font-family: FontAwesome;
 	content: "\f005";
-	color: #f39c12;
 }
 
 #chat .notice .time,
@@ -854,6 +865,14 @@ button,
 
 #chat .notice .user:before {
 	content: "Notice: ";
+}
+
+#chat .error,
+#chat .error .from,
+#chat .highlight .from,
+#chat .highlight .text,
+#chat .highlight .user {
+	color: #f00;
 }
 
 #chat .toggle-button {
@@ -1176,6 +1195,62 @@ button,
 	right: 0;
 	transition: opacity .3s;
 	width: 58px;
+}
+
+#context-menu-container {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	background: transparent;
+}
+
+#context-menu {
+	position: absolute;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	min-width: 160px;
+	font-size: 14px;
+	background-color: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	border: 1px solid rgba(61, 70, 77, .1);
+}
+
+.context-menu-item:first-child {
+	border-bottom: 1px solid rgba(61, 70, 77, .1);
+}
+
+.context-menu-item {
+	cursor: pointer;
+	display: block;
+	padding: 6px 8px;
+	color: #333;
+}
+
+.context-menu-item:hover {
+	background-color: #f6f6f6;
+}
+
+.context-menu-item:before {
+	font-family: FontAwesome;
+	width: 20px;
+	display: inline-block;
+}
+
+.context-menu-user:before {
+	content: "\f007";
+}
+
+.context-menu-chan:before {
+	content: "\f0f6";
+}
+
+.context-menu-close:before {
+	content: "\f057";
 }
 
 /**
