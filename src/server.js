@@ -7,6 +7,7 @@ var fs = require("fs");
 var io = require("socket.io");
 var Helper = require("./helper");
 var ldap = require("ldapjs");
+var db = require('./sqlite');
 var config = {};
 
 var manager = new ClientManager();
@@ -16,6 +17,8 @@ var authFunction = localAuth;
 module.exports = function(options) {
 	config = Helper.getConfig();
 	config = _.extend(config, options);
+
+	db.connect();
 
 	var app = express()
 		.use(index)

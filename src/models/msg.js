@@ -28,7 +28,7 @@ function Msg(attr) {
 		from: "",
 		id: id++,
 		text: "",
-		time: moment().utc().format("HH:mm:ss"),
+		time: moment().utc().toISOString(),
 		type: Msg.Type.MESSAGE,
 		self: false
 	}, attr));
