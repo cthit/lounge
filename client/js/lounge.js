@@ -412,20 +412,16 @@ $(function() {
 
 	socket.on("list", function(data) {
 		var channels = Object.keys(data).map(key => data[key]).map(channel => {
-			return $("<li>").addClass("inline-channel").text(channel.name + ': ' + window.color.stripColorsAndStyle(channel.topic))
-				.data("chan", channel.name)
+			return $("<li>").append(
+				$("<a>").addClass("inline-channel").text(channel.name).data("chan", channel.name),
+				': ' + window.color.stripColorsAndStyle(channel.topic)
+			)
 		})
-		console.log(channels);
-		$("#listModal").html($('<ul>').append(channels))
-		$("#listModal").css({
-			display:"block",
-			position:"absolute",
-			width: '100%',
-			top: 0,
-			left: 0,
-			height: '100%'
-		})
+		$("#listModal .channel-list").html($('<ul>').append(channels))
+		$("#listModal").css("display","block")
 	});
+
+	$("#listModal").on("click", ".channel-list", function(event) {event.stopPropagation()})
 
 	$("#listModal").on("click", ".inline-channel", function() {
 		var chan = $(".network")
@@ -442,6 +438,10 @@ $(function() {
 		}
 		$("#listModal").css("display", "none")
 	});
+
+		$("#listModal").on("click", function () {
+			$("#listModal").css("display", "none")
+		})
 
 	var userStyles = $("#user-specified-css");
 	var settings = $("#settings");
