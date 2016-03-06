@@ -3,5 +3,14 @@ module.exports = function(network, chan, cmd, args) {
 		return;
 	}
 	var irc = network.irc;
-	irc.write('LIST ' + args.join(" "))
+	var client = this;
+
+	network.listCache = network.listCache || []
+	if (network.listCache.length === 0) {
+		irc.write('LIST');
+	} else {
+		client.emit('list', network.listCache);
+	}
+
+
 };
