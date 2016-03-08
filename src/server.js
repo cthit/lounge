@@ -116,37 +116,90 @@ function init(socket, client, token) {
 				client.connect(data);
 			}
 		);
-		if (!config.public) {
+		if (!config.public && !config.ldap.enable) {
 			socket.on(
-				"open",
-				function (data) {
-					client.open(data);
+				"change-password",
+				function(data) {
+					var old = data.old_password;
+					var p1 = data.new_password;
+					var p2 = data.verify_password;
+					if (typeof old === "undefined" || old === "") {
+						socket.emit("change-password", {
+							error: "Please enter your current password"
+						});
+						return;
+					}
+					if (typeof p1 === "undefined" || p1 === "") {
+						socket.emit("change-password", {
+							error: "Please enter a new password"
+						});
+						return;
+					}
+					if (p1 !== p2) {
+						socket.emit("change-password", {
+							error: "Both new password fields must match"
+						});
+						return;
+					}
+					if (!bcrypt.compareSync(old || "", client.config.password)) {
+						socket.emit("change-password", {
+							error: "The current password field does not match your account password"
+						});
+						return;
+					}
+					var salt = bcrypt.genSaltSync(8);
+					var hash = bcrypt.hashSync(p1, salt);
+					if (client.setPassword(hash)) {
+						socket.emit("change-password", {
+							success: "Successfully updated your password"
+						});
+						return;
+					}
+					socket.emit("change-password", {
+						error: "Failed to update your password"
+					});
 				}
 			);
-			socket.on(
-				"sort",
-				function (data) {
-					client.sort(data);
-				}
-			);
-			socket.on(
-				"names",
-				function (data) {
-					client.names(data);
-				}
-			);
-			socket.join(client.id);
-			socket.emit("init", {
-				active: client.activeChannel,
-				networks: client.networks,
-				token: token || ""
-			});
 		}
+		socket.on(
+			"open",
+			function(data) {
+				client.open(data);
+			}
+		);
+		socket.on(
+			"sort",
+			function(data) {
+				client.sort(data);
+			}
+		);
+		socket.on(
+			"names",
+			function(data) {
+				client.names(data);
+			}
+		);
+		socket.join(client.id);
+		socket.emit("init", {
+			active: client.activeChannel,
+			networks: client.networks,
+			token: token || ""
+		});
 	}
 }
 
 function localAuth(client, user, password, callback) {
-	callback(!bcrypt.compareSync(data.password || "", client.config.password));
+	var result = false;
+	try {
+		result = bcrypt.compareSync(password || "", client.config.password);
+	} catch (error) {
+		if (error === 'Not a valid BCrypt hash.') {
+			console.error('User (' + user + ') with no local password set tried signed in. (Probably a ldap user)')
+		}
+		result = false;
+	} finally {
+		callback(result);
+	}
 }
 
 function ldapAuth(client, user, password, callback) {
@@ -174,13 +227,14 @@ function auth(data) {
 		init(socket, client);
 	} else {
 		var client = manager.findClient(data.user, data.token);
+		var signedIn = data.token && client.token === data.token;
 		var token;
 
 		if (data.remember || data.token) {
 			token = client.token;
 		}
 
-		authFunction(client, data.user, data.password, function(success) {
+		var authCallback = function(success) {
 			if (success) {
 				if (!client) {
 					// LDAP just created a user
@@ -191,6 +245,12 @@ function auth(data) {
 			} else {
 				socket.emit("auth");
 			}
-		});
+		};
+
+		if (signedIn) {
+			authCallback(true);
+		} else {
+			authFunction(client, data.user, data.password, authCallback);
+		}
 	}
 }
