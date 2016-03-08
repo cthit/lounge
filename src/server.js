@@ -146,7 +146,17 @@ function init(socket, client, token) {
 }
 
 function localAuth(client, user, password, callback) {
-	callback(bcrypt.compareSync(data.password || "", client.config.password));
+	var result = false;
+	try {
+		result = bcrypt.compareSync(password || "", client.config.password);
+	} catch (error) {
+		if (error === 'Not a valid BCrypt hash.') {
+			console.error('User (' + user + ') with no local password set tried signed in. (Probably a ldap user)')
+		}
+		result = false;
+	} finally {
+		callback(result);
+	}
 }
 
 function ldapAuth(client, user, password, callback) {
@@ -174,13 +184,14 @@ function auth(data) {
 		init(socket, client);
 	} else {
 		var client = manager.findClient(data.user, data.token);
+		var signedIn = data.token && client.token === data.token;
 		var token;
 
 		if (data.remember || data.token) {
 			token = client.token;
 		}
 
-		authFunction(client, data.user, data.password, function(success) {
+		var authCallback = function(success) {
 			if (success) {
 				if (!client) {
 					// LDAP just created a user
@@ -191,6 +202,12 @@ function auth(data) {
 			} else {
 				socket.emit("auth");
 			}
-		});
+		};
+
+		if (signedIn) {
+			authCallback(true);
+		} else {
+			authFunction(client, data.user, data.password, authCallback);
+		}
 	}
 }
