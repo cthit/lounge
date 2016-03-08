@@ -146,7 +146,7 @@ function init(socket, client, token) {
 }
 
 function localAuth(client, user, password, callback) {
-	callback(!bcrypt.compareSync(data.password || "", client.config.password));
+	callback(bcrypt.compareSync(data.password || "", client.config.password));
 }
 
 function ldapAuth(client, user, password, callback) {
