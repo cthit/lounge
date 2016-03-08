@@ -118,30 +118,73 @@ function init(socket, client, token) {
 		);
 		if (!config.public) {
 			socket.on(
-				"open",
-				function (data) {
-					client.open(data);
+				"change-password",
+				function(data) {
+					var old = data.old_password;
+					var p1 = data.new_password;
+					var p2 = data.verify_password;
+					if (typeof old === "undefined" || old === "") {
+						socket.emit("change-password", {
+							error: "Please enter your current password"
+						});
+						return;
+					}
+					if (typeof p1 === "undefined" || p1 === "") {
+						socket.emit("change-password", {
+							error: "Please enter a new password"
+						});
+						return;
+					}
+					if (p1 !== p2) {
+						socket.emit("change-password", {
+							error: "Both new password fields must match"
+						});
+						return;
+					}
+					if (!bcrypt.compareSync(old || "", client.config.password)) {
+						socket.emit("change-password", {
+							error: "The current password field does not match your account password"
+						});
+						return;
+					}
+					var salt = bcrypt.genSaltSync(8);
+					var hash = bcrypt.hashSync(p1, salt);
+					if (client.setPassword(hash)) {
+						socket.emit("change-password", {
+							success: "Successfully updated your password"
+						});
+						return;
+					}
+					socket.emit("change-password", {
+						error: "Failed to update your password"
+					});
 				}
 			);
-			socket.on(
-				"sort",
-				function (data) {
-					client.sort(data);
-				}
-			);
-			socket.on(
-				"names",
-				function (data) {
-					client.names(data);
-				}
-			);
-			socket.join(client.id);
-			socket.emit("init", {
-				active: client.activeChannel,
-				networks: client.networks,
-				token: token || ""
-			});
 		}
+		socket.on(
+			"open",
+			function(data) {
+				client.open(data);
+			}
+		);
+		socket.on(
+			"sort",
+			function(data) {
+				client.sort(data);
+			}
+		);
+		socket.on(
+			"names",
+			function(data) {
+				client.names(data);
+			}
+		);
+		socket.join(client.id);
+		socket.emit("init", {
+			active: client.activeChannel,
+			networks: client.networks,
+			token: token || ""
+		});
 	}
 }
 
