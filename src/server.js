@@ -116,7 +116,7 @@ function init(socket, client, token) {
 				client.connect(data);
 			}
 		);
-		if (!config.public) {
+		if (!config.public && !config.ldap.enable) {
 			socket.on(
 				"change-password",
 				function(data) {
