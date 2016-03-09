@@ -19,11 +19,12 @@ function connect() {
 	}
 }
 
-function insertMessage(msg, user, chan) {
+function insertMessage(msg, user, channel, network) {
 	db.serialize(function() {
-		var stmt = db.prepare("INSERT INTO messages VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)")
+		var stmt = db.prepare("INSERT INTO messages VALUES(?, ?,?,?,?,?,?,?,?,?,?,?,?,?)")
 		stmt.run(
-			chan,
+			network,
+			channel,
 			user,
 			msg.type,
 			msg.from,
@@ -65,6 +66,7 @@ function getMessagesForUser(user) {
 function initializeDatabase() {
 	db.serialize(function() {
 		db.run("CREATE TABLE messages( \
+			network TEXT, \
 			channel TEXT, \
 			user TEXT, \
 			type TEXT, \
@@ -79,7 +81,7 @@ function initializeDatabase() {
 			time TEXT, \
 			isSetByChan INTEGER \
 		)");
-		db.run("CREATE INDEX user_channel on messages (user, channel);")
+		db.run("CREATE INDEX user_channel_network on messages (user, channel, network);")
 	});
 }
 

@@ -62,7 +62,7 @@ module.exports = function(irc, network) {
 		});
 
 		if (config.sqlite) {
-			db.insertMessage(msg, client.name, chan.name)
+			db.insertMessage(msg, client.name, chan.name, network.name);
 		} else {
 			chan.messages.push(msg);
 		}
