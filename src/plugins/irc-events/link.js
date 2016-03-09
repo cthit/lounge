@@ -4,6 +4,7 @@ var Msg = require("../../models/msg");
 var request = require("request");
 var Helper = require("../../helper");
 var es = require("event-stream");
+var storage = require("../storage");
 
 process.setMaxListeners(0);
 
@@ -38,7 +39,7 @@ module.exports = function(irc, network) {
 			type: Msg.Type.TOGGLE,
 			time: ""
 		});
-		chan.messages.push(msg);
+		storage.insertMessage(msg, client.name, chan, network);
 		client.emit("msg", {
 			chan: chan.id,
 			msg: msg

@@ -1,6 +1,7 @@
 var _ = require("lodash");
 var Chan = require("../../models/chan");
 var Msg = require("../../models/msg");
+var storage = require("../storage");
 
 module.exports = function(irc, network) {
 	var client = this;
@@ -36,7 +37,7 @@ module.exports = function(irc, network) {
 				from: data.nickname,
 				text: key + " " + data[k]
 			});
-			chan.messages.push(msg);
+			storage.insertMessage(msg, client.name, chan, network);
 			client.emit("msg", {
 				chan: chan.id,
 				msg: msg

@@ -1,7 +1,9 @@
 var _ = require("lodash");
 var Msg = require("../../models/msg");
+var storage = require("../storage");
 
 module.exports = function(network, chan, cmd, args) {
+	var client = this;
 	if (cmd !== "notice" || !args[1]) {
 		return;
 	}
@@ -22,8 +24,8 @@ module.exports = function(network, chan, cmd, args) {
 		from: irc.me,
 		text: message
 	});
-	targetChan.messages.push(msg);
-	this.emit("msg", {
+	storage.insertMessage(msg, client.name, targetChan, network);
+	client.emit("msg", {
 		chan: targetChan.id,
 		msg: msg
 	});
