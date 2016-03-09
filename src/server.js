@@ -7,7 +7,7 @@ var fs = require("fs");
 var io = require("socket.io");
 var Helper = require("./helper");
 var ldap = require("ldapjs");
-var db = require('./sqlite');
+var storage = require('./storage');
 var config = {};
 
 var manager = new ClientManager();
@@ -18,7 +18,7 @@ module.exports = function(options) {
 	config = Helper.getConfig();
 	config = _.extend(config, options);
 
-	db.connect();
+	storage.setup();
 
 	var app = express()
 		.use(index)

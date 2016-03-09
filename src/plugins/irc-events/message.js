@@ -1,9 +1,7 @@
 var _ = require("lodash");
 var Chan = require("../../models/chan");
 var Msg = require("../../models/msg");
-var Helper = require("../../helper");
-var config = Helper.getConfig();
-var db = require("../../sqlite");
+var storage = require("../storage");
 
 module.exports = function(irc, network) {
 	var client = this;
@@ -61,11 +59,7 @@ module.exports = function(irc, network) {
 			highlight: highlight
 		});
 
-		if (config.sqlite) {
-			db.insertMessage(msg, client.name, chan.name, network.name);
-		} else {
-			chan.messages.push(msg);
-		}
+		storage.insertMessage(msg, client.name, chan, network);
 
 		client.emit("msg", {
 			chan: chan.id,
