@@ -73,7 +73,7 @@ function getMessagesForUser(db, user) {
 			});
 		})
 	});
-});
+}
 
 
 module.exports = {

@@ -1,5 +1,5 @@
 var fs = require('fs');
-var Helper = require('./helper');
+var Helper = require('../../helper');
 var sqlite3 = require('sqlite3').verbose();
 
 var messageStorage = require('./messages.js');

@@ -1,6 +1,6 @@
 var _ = require("lodash");
 var Msg = require("../../models/msg");
-var storage = require("../storage");
+var storage = require("../../storage");
 
 module.exports = function(irc, network) {
 	var client = this;

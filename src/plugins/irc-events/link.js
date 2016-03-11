@@ -4,7 +4,7 @@ var Msg = require("../../models/msg");
 var request = require("request");
 var Helper = require("../../helper");
 var es = require("event-stream");
-var storage = require("../storage");
+var storage = require("../../storage");
 
 process.setMaxListeners(0);
 
